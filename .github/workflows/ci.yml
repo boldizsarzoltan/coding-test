@@ -12,6 +12,7 @@ jobs:
       - uses: php-actions/phpstan@v3
         with:
           path: src/
-      - uses: php-actions/phpunit@v3
+      - name: Run test suite
+        run: vendor/bin/phpunit
         with:
           php-version: 8.3
