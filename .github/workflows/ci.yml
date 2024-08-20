@@ -12,7 +12,5 @@ jobs:
       - uses: php-actions/phpstan@v3
         with:
           path: src/
-      - uses: php-actions/phpunit@v3
-        with:
-          configuration: "./phpunit.xml"
-          memory_limit: "256M"
+      - name: Run test suite
+        run: vendor/bin/phpunit
