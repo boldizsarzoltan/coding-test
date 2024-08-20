@@ -21,6 +21,4 @@
             <directory>tests</directory>
         </testsuite>
     </testsuites>
-    <extensions>
-    </extensions>
 </phpunit>
