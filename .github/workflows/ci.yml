@@ -14,5 +14,5 @@ jobs:
           path: src/
       - uses: php-actions/phpunit@v3
         with:
-          configuration: "phpunit.xml"
+          configuration: "./phpunit.xml"
           memory_limit: "256M"
