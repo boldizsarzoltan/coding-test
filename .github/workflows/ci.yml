@@ -19,5 +19,3 @@ jobs:
           path: src/
       - name: Run test suite
         run: vendor/bin/phpunit
-        with:
-          php-version: 8.3
