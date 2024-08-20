@@ -12,4 +12,4 @@ jobs:
       - uses: php-actions/phpstan@v3
         with:
           path: src/
-      - uses: php-actions/phpunit@v2
+      - uses: php-actions/phpunit@v3
