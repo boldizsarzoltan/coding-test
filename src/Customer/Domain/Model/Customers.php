@@ -3,7 +3,9 @@
 namespace App\Customer\Domain\Model;
 
 use App\Shared\TypedArray;
-
+/**
+ * @extends  TypedArray<Customer>
+ */
 class Customers extends TypedArray
 {
     public function findById(int $idToFind): ?Customer

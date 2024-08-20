@@ -17,24 +17,31 @@ readonly class FileCustomerRepository implements CustomerRepository
 
     public function getById(int $id): ?Customer
     {
-        return $this->getCustomers()->findById($id);
+        $customers = $this->getCustomers();
+        if(is_null($customers)) {
+            return null;
+        }
+        return $customers->findById($id);
     }
 
     /**
-     * @return void|Customers<Customer>
+     * @return null|Customers<Customer>
      */
     public function getCustomers(): ?Customers
     {
         if (!$this->filesystem->exists('data/customers.json')) {
             return null;
         }
-        $rawCustomerDatas = $this->filesystem->readFile('data/customers.json');
-        if (!json_validate($rawCustomerDatas)) {
+        $rawCustomersData = $this->filesystem->readFile('data/customers.json');
+        if (!json_validate($rawCustomersData)) {
             return null;
         }
-        $customerDatas = json_decode($rawCustomerDatas, true);
+        $customersData = json_decode($rawCustomersData, true);
+        if(!is_array($customersData)) {
+            return null;
+        }
         $customers = new Customers();
-        foreach ($customerDatas as $customerData) {
+        foreach ($customersData as $customerData) {
             $customer = $this->customerMapper->mapCustomer($customerData);
             $customers->append($customer);
         }

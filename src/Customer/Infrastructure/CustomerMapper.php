@@ -15,8 +15,11 @@ readonly class CustomerMapper
     {
         if(
             !isset($data["id"]) ||
+            !is_integer($data["id"]) ||
             !isset($data["name"]) ||
-            !isset($data["since"])
+            !is_string($data["name"]) ||
+            !isset($data["since"]) ||
+            !is_string($data["since"])
         ) {
             throw new InvalidCustomerException();
         }
@@ -24,7 +27,7 @@ readonly class CustomerMapper
         return new Customer(
             $data["id"],
             $data["name"],
-            $data["since"],
+            new \DateTimeImmutable($data["since"]),
             $data["revenue"] ?? 0
         );
     }
