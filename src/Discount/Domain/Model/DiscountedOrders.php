@@ -5,7 +5,7 @@ namespace App\Discount\Domain\Model;
 use App\Shared\TypedArray;
 
 /**
- * @extends  TypedArray<DiscountedOrders>
+ * @extends  TypedArray<DiscountedOrder>
  */
 class DiscountedOrders extends TypedArray
 {
@@ -26,5 +26,6 @@ class DiscountedOrders extends TypedArray
 
     public function exchangeArray(object|array $array): array
     {
+        return $this->getArrayCopy();
     }
 }

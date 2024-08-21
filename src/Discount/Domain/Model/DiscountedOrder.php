@@ -2,14 +2,13 @@
 
 namespace App\Discount\Domain\Model;
 
-use App\Discount\Domain\Discount\Discount;
-use App\Discount\Domain\Order\Model\Order;
+use App\Discount\Domain\Discount\Model\Discount;
 
 readonly class DiscountedOrder
 {
     public function __construct(
-        Discount $discount,
-        Order $order
+        public Discount $discount,
+        public Order $order
     ) {
     }
 }

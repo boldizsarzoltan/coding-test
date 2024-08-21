@@ -23,4 +23,16 @@ class OrderItems extends TypedArray
         }
         return $total;
     }
+
+    /**
+     * @return array<string>
+     */
+    public function getItemIds(): array
+    {
+        $ids = [];
+        foreach ($this as $orderItem) {
+            $ids[] = $orderItem->id;
+        }
+        return $ids;
+    }
 }

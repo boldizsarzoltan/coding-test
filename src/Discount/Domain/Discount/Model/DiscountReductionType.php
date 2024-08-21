@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Discount\Domain\Discount;
+namespace App\Discount\Domain\Discount\Model;
 
 enum DiscountReductionType: string
 {

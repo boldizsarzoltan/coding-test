@@ -2,16 +2,16 @@
 
 namespace App\Discount\Application;
 
-use App\Discount\Domain\Order\Order;
+use App\Discount\Domain\Order\Model\Order;
 use Symfony\Component\HttpFoundation\Request;
 
 class OrderMapper
 {
-    public function mapRequestToOrder(Request $request): ?Order
+    /**
+     * @return Order|null
+     */
+    public function mapToOrder(mixed $data): ?Order
     {
-        $parameters = json_decode($request->getContent(), true);
-        if(!isset()) {
-
-        }
+        return null;
     }
 }
