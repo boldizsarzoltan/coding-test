@@ -13,7 +13,7 @@ readonly class CustomerMapper
      */
     public function mapCustomer(array $data): Customer
     {
-        if(
+        if (
             !isset($data["id"]) ||
             !is_integer($data["id"]) ||
             !isset($data["name"]) ||

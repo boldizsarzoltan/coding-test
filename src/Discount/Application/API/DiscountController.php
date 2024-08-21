@@ -11,8 +11,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class DiscountController
 {
     public function __construct(
-            private DiscountService $discountService,
-            private DiscountOrderMapper $discountOrderMapper
+        private DiscountService $discountService,
+        private DiscountOrderMapper $discountOrderMapper
     ) {
     }
 

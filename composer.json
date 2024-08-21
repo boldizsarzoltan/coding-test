@@ -16,7 +16,8 @@
     },
     "require-dev": {
         "phpstan/phpstan": "^1.11",
-        "phpunit/phpunit": "^11"
+        "phpunit/phpunit": "^11",
+        "squizlabs/php_codesniffer": "*"
     },
     "config": {
         "allow-plugins": {

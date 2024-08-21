@@ -3,6 +3,7 @@
 namespace App\Customer\Domain\Model;
 
 use App\Shared\TypedArray;
+
 /**
  * @extends  TypedArray<Customer>
  */
@@ -12,7 +13,7 @@ class Customers extends TypedArray
     {
         /** @var Customer $customer */
         foreach ($this->getArrayCopy() as $customer) {
-            if($customer->id === $idToFind) {
+            if ($customer->id === $idToFind) {
                 return $customer;
             }
         }

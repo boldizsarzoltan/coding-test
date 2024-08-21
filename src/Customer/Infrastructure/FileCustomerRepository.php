@@ -18,7 +18,7 @@ readonly class FileCustomerRepository implements CustomerRepository
     public function getById(int $id): ?Customer
     {
         $customers = $this->getCustomers();
-        if(is_null($customers)) {
+        if (is_null($customers)) {
             return null;
         }
         return $customers->findById($id);
@@ -37,7 +37,7 @@ readonly class FileCustomerRepository implements CustomerRepository
             return null;
         }
         $customersData = json_decode($rawCustomersData, true);
-        if(!is_array($customersData)) {
+        if (!is_array($customersData)) {
             return null;
         }
         $customers = new Customers();
