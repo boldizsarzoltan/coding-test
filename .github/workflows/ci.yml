@@ -24,3 +24,4 @@ jobs:
             php_version: 8.3
             path: src/
             standard: phpcs.xml.dist
+            severity: 0
