@@ -4,7 +4,7 @@ namespace App\Discount\Application\API;
 
 use App\Discount\Application\Service\DiscountOrderMapper;
 use App\Discount\Application\Service\DiscountService;
-use App\Discount\Domain\Model\Order;
+use App\Discount\Domain\Model\DiscountedOrder;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -19,7 +19,7 @@ class DiscountController
     #[Route(path:'/discounts', name: 'discounts', methods: ['POST'])]
     public function getOrderWithDiscounts(): JsonResponse
     {
-        $order = new Order();
+        $order = new DiscountedOrder();
         return new JsonResponse(
             $this->discountOrderMapper->mapOrderWithDiscountToArray(
                 $this->discountService->getOrderWithDiscount($order)

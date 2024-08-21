@@ -16,7 +16,8 @@ readonly class ProductMapper
         if (
             empty($data['id']) || !is_string($data['id']) ||
             empty($data['description']) || !is_string($data["description"]) || empty($data['category']) ||
-            (!is_int($data["category"]) && !ctype_digit($data['category'])) || empty($data['price']) || !is_numeric($data["price"])
+            (!is_int($data["category"]) && !ctype_digit($data['category'])) ||
+            empty($data['price']) || !is_numeric($data["price"])
         ) {
             throw new InvalidProductException();
         }

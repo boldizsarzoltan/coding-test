@@ -2,6 +2,14 @@
 
 namespace App\Discount\Domain\Model;
 
-class OrderWithDiscount
+use App\Discount\Domain\Order\Model\Order;
+
+readonly class OrderWithDiscount
 {
+    public function __construct(
+        public Order $originalOrder,
+        public DiscountedOrders $discountedOrderHistory,
+        public DiscountedOrder $finalOrder
+    ) {
+    }
 }

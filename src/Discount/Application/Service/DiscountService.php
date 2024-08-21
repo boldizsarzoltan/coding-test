@@ -2,12 +2,12 @@
 
 namespace App\Discount\Application\Service;
 
-use App\Discount\Domain\Model\Order;
+use App\Discount\Domain\Model\DiscountedOrder;
 use App\Discount\Domain\Model\OrderWithDiscount;
 
 class DiscountService
 {
-    public function getOrderWithDiscount(Order $order): OrderWithDiscount
+    public function getOrderWithDiscount(DiscountedOrder $order): OrderWithDiscount
     {
         return new OrderWithDiscount();
     }
