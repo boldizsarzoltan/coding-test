@@ -19,3 +19,5 @@ jobs:
           path: src/
       - name: Run test suite
         run: vendor/bin/phpunit
+      - name: Run phpcs
+        run: phpcs --standard=PSR12 -n src/

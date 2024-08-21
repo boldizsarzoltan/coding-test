@@ -8,8 +8,8 @@ use App\Customer\Domain\Service\CustomerRepository;
 readonly class CustomerFacade
 {
     public function __construct(
-      private CustomerRepository $customerRepository,
-      private CustomerMapper $customerMapper
+        private CustomerRepository $customerRepository,
+        private CustomerMapper $customerMapper
     ) {
     }
 
@@ -23,7 +23,7 @@ readonly class CustomerFacade
     public function getCustomerOrderData(int $customerId): ?array
     {
         $customer = $this->customerRepository->getById($customerId);
-        if(is_null($customer)) {
+        if (is_null($customer)) {
             return null;
         }
         return $this->customerMapper->customerToOrderArray($customer);
