@@ -9,6 +9,24 @@ use App\Shared\TypedArray;
  */
 class OrderItems extends TypedArray
 {
+    public function isEmpty(): bool
+    {
+        return $this->count() <= 0;
+    }
+
+    public function overWriteWithNewItems(OrderItems $newOrderItems): self
+    {
+        $newOrderItems = new self($newOrderItems->getArrayCopy());
+        $overWriteProductIds = $newOrderItems->getProductIds();
+        /** @var OrderItem $originalOrderItem */
+        foreach ($this as $originalOrderItem) {
+            if (!in_array($originalOrderItem->id, $overWriteProductIds)) {
+                $newOrderItems->append($originalOrderItem);
+            }
+        }
+        return $newOrderItems;
+    }
+
     protected function getType(): string
     {
         return OrderItem::class;
@@ -22,5 +40,17 @@ class OrderItems extends TypedArray
             $total += $orderItem->getTotal();
         }
         return $total;
+    }
+
+    /**
+     * @return array<string>
+     */
+    private function getProductIds(): array
+    {
+        $productIds = [];
+        foreach ($this as $orderItem) {
+            $productIds[] = $orderItem->getProductId();
+        }
+        return  $productIds;
     }
 }

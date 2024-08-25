@@ -4,6 +4,7 @@ namespace App\Discount\Domain\Service;
 
 use App\Discount\Domain\Discount\Model\Discount;
 use App\Discount\Domain\Discount\Service\DiscountRepository;
+use App\Discount\Domain\Model\DiscountedOrder;
 use App\Discount\Domain\Model\DiscountedOrders;
 use App\Discount\Domain\Model\OrderWithDiscount;
 use App\Discount\Domain\Order\Model\Order;
@@ -28,14 +29,18 @@ readonly class DiscountService
         $discounts = $this->discountRepository->getDiscounts();
         /** @var Discount $discount */
         foreach ($discounts as $discount) {
-            if (!$this->discountVerifier->isEligibleForDiscount($discountOrder, $discount)) {
+            $orderItemsEligibleForDiscount = $this->discountVerifier->getOrderItemsEligibleDiscount($discountOrder, $discount);
+            if (!$orderItemsEligibleForDiscount->isEmpty()) {
                 continue;
             }
-            $orderWithAppliedDiscount = $this->discountApplier->getDiscountedOrder(
+            $orderItemsWithAppliedDiscount = $this->discountApplier->getDiscountedOrder(
                 $discountOrder,
                 $discount
             );
-            $discountOrder = $orderWithAppliedDiscount->order;
+            $discountOrder = new DiscountedOrder(
+                $discount,
+                $discountOrder->getOrderWithNewItems($orderItemsWithAppliedDiscount)
+            );
             $discountedOrderHistory->append($orderWithAppliedDiscount);
         }
         return new OrderWithDiscount(

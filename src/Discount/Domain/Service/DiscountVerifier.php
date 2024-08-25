@@ -7,10 +7,11 @@ use App\Discount\Domain\Discount\Model\DiscountRule;
 use App\Discount\Domain\Discount\Model\DiscountRuleType;
 use App\Discount\Domain\Model\Order;
 use App\Discount\Domain\Model\OrderItem;
+use App\Discount\Domain\Model\OrderItems;
 
 class DiscountVerifier
 {
-    public function isEligibleForDiscount(Order $order, Discount $discount): bool
+    public function getOrderItemsEligibleDiscount(Order $order, Discount $discount): OrderItems
     {
         return match ($discount->discountRule->discountRuleType) {
             DiscountRuleType::CustomerTotal => $this->customerHasMinTotal($order, $discount->discountRule),

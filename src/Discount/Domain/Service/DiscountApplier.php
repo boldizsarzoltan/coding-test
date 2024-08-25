@@ -7,10 +7,12 @@ use App\Discount\Domain\Discount\Model\DiscountReduction;
 use App\Discount\Domain\Discount\Model\DiscountReductionType;
 use App\Discount\Domain\Model\DiscountedOrder;
 use App\Discount\Domain\Model\Order;
+use App\Discount\Domain\Model\OrderItem;
+use App\Discount\Domain\Model\OrderItems;
 
 class DiscountApplier
 {
-    public function getDiscountedOrder(Order $order, Discount $discount): DiscountedOrder
+    public function getDiscountedOrder(Order $order, Discount $discount): OrderItems
     {
         return new DiscountedOrder(
             $discount,
@@ -44,11 +46,61 @@ class DiscountApplier
 
     private function applyCheapestPercent(Order $order, int $value): Order
     {
+        $newOrderItems = new OrderItems();
+        $productId = 0;
+        $minToTalPrice = 0;
+        foreach ($order->orderItems as $orderItem) {
+            if($minToTalPrice !== 0 && $orderItem->getTotal() < $minToTalPrice) {
+                $minToTalPrice = $orderItem->getTotal();
+                $productId = $orderItem->id;
+            }
+        }
+        foreach ($order->orderItems as $originalOrderItem) {
+            if($productId !== $originalOrderItem->getProductId()) {
+                $newOrderItems->append($originalOrderItem);
+            }
+            else {
+                $newUnitPrice = $this->getRoundedPrice($originalOrderItem->unitPrice, $value);
+                $orderItemWithDiscount = new OrderItem(
+                    $originalOrderItem->id,
+                    $originalOrderItem->categoryId,
+                    $originalOrderItem->quantity,
+                    $newUnitPrice,
+                );
+                $newOrderItems->append($orderItemWithDiscount);
+            }
+        }
+
         return $order;
     }
 
     private function applyTotalPercent(Order $order, int $value): Order
     {
-        return $order;
+        if($value < 0 {
+            // TODO: add exception
+            return $order;
+        }
+        $orderItemsWithDiscount = new OrderItems();
+        /** @var OrderItem $orderItem */
+        foreach ($order->orderItems as $originalOrderItem) {
+            $newUnitPrice = $this->getRoundedPrice($originalOrderItem->unitPrice, $value);
+            $newOrderItem = new OrderItem(
+                $originalOrderItem->id,
+                $originalOrderItem->categoryId,
+                $originalOrderItem->quantity,
+                $newUnitPrice,
+            );
+            $orderItemsWithDiscount->append($newOrderItem);
+        }
+        return new Order(
+            $order->id,
+            $order->customer,
+            $orderItemsWithDiscount
+        );
+    }
+
+    public function getRoundedPrice(int $unitPrice, int $value): int
+    {
+        return (int) round($unitPrice / $value, PHP_ROUND_HALF_UP);
     }
 }

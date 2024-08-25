@@ -10,4 +10,13 @@ readonly class Order
         public OrderItems $orderItems
     ) {
     }
+
+    public function getOrderWithNewItems(OrderItems $newOrderItems): self
+    {
+        return new self(
+            $this->id,
+            $this->customer,
+            $newOrderItems->overWriteWithNewItems($newOrderItems)
+        );
+    }
 }
