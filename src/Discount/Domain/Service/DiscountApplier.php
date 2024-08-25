@@ -3,52 +3,82 @@
 namespace App\Discount\Domain\Service;
 
 use App\Discount\Domain\Discount\Model\Discount;
-use App\Discount\Domain\Discount\Model\DiscountReduction;
 use App\Discount\Domain\Discount\Model\DiscountReductionType;
-use App\Discount\Domain\Model\DiscountedOrder;
-use App\Discount\Domain\Model\Order;
+use App\Discount\Domain\Model\OrderItem;
+use App\Discount\Domain\Model\OrderItems;
 
 class DiscountApplier
 {
-    public function getDiscountedOrder(Order $order, Discount $discount): DiscountedOrder
+    public function getDiscountedOrderItems(OrderItems $orderItems, Discount $discount): OrderItems
     {
-        return new DiscountedOrder(
-            $discount,
-            $this->applyDiscountToOrder($order, $discount->discountReduction)
-        );
-    }
-
-    private function applyDiscountToOrder(Order $order, DiscountReduction $discountReduction): Order
-    {
-        return match ($discountReduction->discountType) {
+        return match ($discount->discountReduction->discountType) {
             DiscountReductionType::FreeCount => $this->applyFreeCount(
-                $order,
-                $discountReduction->value,
-                (int) $discountReduction->value2
+                $orderItems,
+                $discount->discountReduction->value,
             ),
             DiscountReductionType::CheapestPercent => $this->applyCheapestPercent(
-                $order,
-                $discountReduction->value
+                $orderItems,
+                $discount->discountReduction->value
             ),
             DiscountReductionType::TotalPercent => $this->applyTotalPercent(
-                $order,
-                $discountReduction->value
+                $orderItems,
+                $discount->discountReduction->value
             ),
         };
     }
 
-    private function applyFreeCount(Order $order, int $minProductCount, int $countToBeFree): Order
+    private function applyFreeCount(OrderItems $orderItems, int $countToBeFree): OrderItems
     {
-        return $order;
+        $orderItemsWithDiscount = new OrderItems();
+        /** @var OrderItem $orderItem */
+        foreach ($orderItems as $orderItem) {
+            $orderItemsWithDiscount->append($orderItem->addFreeCount($countToBeFree));
+        }
+        return $orderItemsWithDiscount;
     }
 
-    private function applyCheapestPercent(Order $order, int $value): Order
+    private function applyCheapestPercent(OrderItems $orderItems, int $value): OrderItems
     {
-        return $order;
+        $newOrderItems = new OrderItems();
+        $productId = 0;
+        $minToTalPrice = 0;
+        foreach ($orderItems as $orderItem) {
+            if (($minToTalPrice !== 0 || $orderItem->getTotal() < $minToTalPrice) && $orderItem->hasNotFreeQuantity()) {
+                $minToTalPrice = $orderItem->getTotal();
+                $productId = $orderItem->id;
+            }
+        }
+        /** @var OrderItem $originalOrderItem */
+        foreach ($orderItems as $originalOrderItem) {
+            if ($productId !== $originalOrderItem->id) {
+                $newOrderItems->append($originalOrderItem);
+            } else {
+                $newUnitPrice = $this->getRoundedPrice($originalOrderItem->unitPrice, $value);
+                $orderItemWithDiscount = $originalOrderItem->overWriteWithNewUnitPrice($newUnitPrice);
+                $newOrderItems->append($orderItemWithDiscount);
+            }
+        }
+
+        return $newOrderItems;
     }
 
-    private function applyTotalPercent(Order $order, int $value): Order
+    private function applyTotalPercent(OrderItems $orderItems, int $value): OrderItems
     {
-        return $order;
+        if ($value < 0) {
+            return $orderItems;
+        }
+        $orderItemsWithDiscount = new OrderItems();
+        /** @var OrderItem $originalOrderItem */
+        foreach ($orderItems as $originalOrderItem) {
+            $newUnitPrice = $this->getRoundedPrice($originalOrderItem->unitPrice, $value);
+            $newOrderItem = $originalOrderItem->overWriteWithNewUnitPrice($newUnitPrice);
+            $orderItemsWithDiscount->append($newOrderItem);
+        }
+        return $orderItemsWithDiscount;
+    }
+
+    public function getRoundedPrice(int $unitPrice, int $value): int
+    {
+        return $unitPrice - (int) round($unitPrice / $value, PHP_ROUND_HALF_UP);
     }
 }

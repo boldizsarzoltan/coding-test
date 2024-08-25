@@ -4,6 +4,7 @@ namespace App\Discount\Infrastructure;
 
 use App\Discount\Domain\Model\OrderItem as DiscountOrderItem;
 use App\Discount\Domain\Order\Model\OrderItem as SimpleOrderItem;
+use App\Shared\Settings;
 
 class DiscountItemMapper
 {
@@ -19,7 +20,8 @@ class DiscountItemMapper
             $orderItem->id,
             (int) $additionalData["category_id"],
             $orderItem->quantity,
-            $orderItem->unitPrice
+            $orderItem->unitPrice,
+            Settings::DEFAULT_FREE_COUNT
         );
     }
 }

@@ -5,18 +5,21 @@ namespace App\Discount\Domain\Model;
 use App\Shared\TypedArray;
 
 /**
- * @extends  TypedArray<DiscountedOrder>
+ * @extends  TypedArray<DiscountedOrderItems>
  */
-class DiscountedOrders extends TypedArray
+class DiscountedOrdersItems extends TypedArray
 {
     public function __construct()
     {
         parent::__construct();
     }
 
+    /**
+     * @return class-string<DiscountedOrderItems>
+     */
     protected function getType(): string
     {
-        return DiscountedOrder::class;
+        return DiscountedOrderItems::class;
     }
 
     //TODO: add errors to these

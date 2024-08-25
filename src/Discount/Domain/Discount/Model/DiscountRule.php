@@ -18,8 +18,8 @@ readonly class DiscountRule
     private function validate(): void
     {
         switch ($this->discountRuleType) {
-            case DiscountRuleType::IndividualProductCategoryId:
             case DiscountRuleType::CustomerTotal:
+            case DiscountRuleType::IndividualProductCategoryId:
                 if (!is_null($this->value2)) {
                     throw new InvalidDiscountRuleTypeException();
                 }

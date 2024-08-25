@@ -34,7 +34,6 @@ class StaticDiscountRepository implements DiscountRepository
         );
         $buyAtLeast5Get1Free = new DiscountReduction(
             DiscountReductionType::FreeCount,
-            5,
             1
         );
         $orderProductHasId2buyAtLeast5Get1Free = new Discount(

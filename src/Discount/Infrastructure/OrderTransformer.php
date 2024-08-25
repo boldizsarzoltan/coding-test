@@ -3,14 +3,15 @@
 namespace App\Discount\Infrastructure;
 
 use App\Customer\Application\Gateway\CustomerFacade;
-use App\Discount\Domain\Model\Order as EnhancedOrder;
+use App\Discount\Domain\Model\DiscountedOrder;
+use App\Discount\Domain\Model\Order as DiscountOrder;
+use App\Discount\Domain\Order\Model\Order;
 use App\Discount\Domain\Model\OrderItems;
-use App\Discount\Domain\Order\Model\Order as SimpleOrderModel;
 use App\Discount\Domain\Order\Model\OrderItem;
-use App\Discount\Domain\Service\OrderEnhancer as OrderEnhancerInterface;
+use App\Discount\Domain\Service\OrderTransformer as OrderEnhancerInterface;
 use App\Product\Application\Gateway\ProductFacade;
 
-readonly class OrderEnhancer implements OrderEnhancerInterface
+readonly class OrderTransformer implements OrderEnhancerInterface
 {
     public function __construct(
         private CustomerFacade $customerFacade,
@@ -20,7 +21,7 @@ readonly class OrderEnhancer implements OrderEnhancerInterface
     ) {
     }
 
-    public function enhanceOrder(SimpleOrderModel $order): ?EnhancedOrder
+    public function transformOrderToDiscountOrder(Order $order): ?DiscountOrder
     {
         $discountCustomer = $this->customerFacade->getCustomerOrderData($order->customerId);
         if (is_null($discountCustomer)) {
@@ -47,7 +48,7 @@ readonly class OrderEnhancer implements OrderEnhancerInterface
             }
             $dicountOrderItems->append($discountOrderItem);
         }
-        return new EnhancedOrder(
+        return new DiscountOrder(
             $order->id,
             $discountOrderCustomer,
             $dicountOrderItems

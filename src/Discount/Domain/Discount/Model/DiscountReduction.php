@@ -11,8 +11,7 @@ readonly class DiscountReduction
 {
     public function __construct(
         public DiscountReductionType $discountType,
-        public int $value,
-        public ?int $value2 = null
+        public int $value
     ) {
         $this->validate();
     }
@@ -21,16 +20,13 @@ readonly class DiscountReduction
         switch ($this->discountType) {
             case DiscountReductionType::CheapestPercent:
             case DiscountReductionType::TotalPercent:
-                if (!is_null($this->value2) || $this->value < 0 || $this->value > Settings::MAX_DISCOUNT_PERCENT) {
+                if ($this->value < 0 || $this->value > Settings::MAX_DISCOUNT_PERCENT) {
                     throw new InvalidDiscountReductionTypeException();
                 }
                 break;
             case DiscountReductionType::FreeCount:
-                if (
-                    is_null($this->value2) || $this->value2 < 1 ||
-                    $this->value < 0 || $this->value > Settings::MAX_FREE_COUNT
-                ) {
-                    throw new InvalidDiscountRuleTypeException();
+                if ($this->value < 0 || $this->value > Settings::MAX_FREE_COUNT) {
+                    throw new InvalidDiscountReductionTypeException();
                 }
                 break;
             default:
