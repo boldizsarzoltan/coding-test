@@ -7,7 +7,7 @@ use App\Shared\TypedArray;
 /**
  * @extends  TypedArray<DiscountedOrder>
  */
-class DiscountedOrders extends TypedArray
+class DiscountedOrdersItems extends TypedArray
 {
     public function __construct()
     {
@@ -16,7 +16,7 @@ class DiscountedOrders extends TypedArray
 
     protected function getType(): string
     {
-        return DiscountedOrder::class;
+        return DiscountedOrderItems::class;
     }
 
     //TODO: add errors to these

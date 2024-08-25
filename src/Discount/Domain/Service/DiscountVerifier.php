@@ -29,29 +29,43 @@ class DiscountVerifier
     private function customerHasMinTotal(
         Order $order,
         DiscountRule $discountRule
-    ): bool {
-        return $discountRule->value >= $order->customer->total;
+    ): OrderItems {
+        if ($discountRule->value >= $order->customer->total) {
+            return new OrderItems();
+        }
+        return $order->orderItems;
     }
 
-    private function orderProductsHaveCategoryId(Order $order, DiscountRule $discountRule): bool
+    private function orderProductsHaveCategoryId(Order $order, DiscountRule $discountRule): OrderItems
     {
+        $categoryProductsCount = 0;
         /** @var OrderItem $item */
         foreach ($order->orderItems as $item) {
             if ($item->categoryId === $discountRule->value) {
-                return true;
+                $categoryProductsCount++;
             }
         }
-        return false;
-    }
-
-    private function orderHasMinAmountOfProductsFromCategory(Order $order, DiscountRule $discountRule): bool
-    {
-        $categoryProductCount = 0;
+        if ($categoryProductsCount <= $discountRule->value2) {
+            return new OrderItems();
+        }
+        $categoryOrderItems = new OrderItems();
         foreach ($order->orderItems as $item) {
             if ($item->categoryId === $discountRule->value) {
-                $categoryProductCount += $item->quantity;
+                $categoryOrderItems->append($item);
             }
         }
-        return $categoryProductCount >= (int) $discountRule->value2;
+        return $categoryOrderItems;
+    }
+
+    private function orderHasMinAmountOfProductsFromCategory(Order $order, DiscountRule $discountRule): OrderItems
+    {
+        $categoryOrderItems = new OrderItems();
+        /** @var OrderItem $item */
+        foreach ($order->orderItems as $item) {
+            if ($item->categoryId === $discountRule->value && $item->quantity >= (int) $discountRule->value2) {
+                $categoryOrderItems->append($item);
+            }
+        }
+        return $categoryOrderItems;
     }
 }

@@ -5,9 +5,11 @@ namespace App\Discount\Domain\Service;
 use App\Discount\Domain\Discount\Model\Discount;
 use App\Discount\Domain\Discount\Service\DiscountRepository;
 use App\Discount\Domain\Model\DiscountedOrder;
-use App\Discount\Domain\Model\DiscountedOrders;
+use App\Discount\Domain\Model\DiscountedOrderItems;
+use App\Discount\Domain\Model\DiscountedOrdersItems;
 use App\Discount\Domain\Model\OrderWithDiscount;
 use App\Discount\Domain\Order\Model\Order;
+use App\Discount\Domain\Model\Order as DiscountOrder;
 
 readonly class DiscountService
 {
@@ -25,23 +27,26 @@ readonly class DiscountService
         if (is_null($discountOrder)) {
             return null;
         }
-        $discountedOrderHistory = new DiscountedOrders();
+        $discountedOrderHistory = new DiscountedOrdersItems();
         $discounts = $this->discountRepository->getDiscounts();
         /** @var Discount $discount */
         foreach ($discounts as $discount) {
-            $orderItemsEligibleForDiscount = $this->discountVerifier->getOrderItemsEligibleDiscount($discountOrder, $discount);
-            if (!$orderItemsEligibleForDiscount->isEmpty()) {
-                continue;
-            }
-            $orderItemsWithAppliedDiscount = $this->discountApplier->getDiscountedOrder(
+            $orderItemsEligibleForDiscount = $this->discountVerifier->getOrderItemsEligibleDiscount(
                 $discountOrder,
                 $discount
             );
-            $discountOrder = new DiscountedOrder(
-                $discount,
-                $discountOrder->getOrderWithNewItems($orderItemsWithAppliedDiscount)
+            if (!$orderItemsEligibleForDiscount->isEmpty()) {
+                continue;
+            }
+            $orderItemsWithAppliedDiscount = $this->discountApplier->getDiscountedOrderItems(
+                $orderItemsEligibleForDiscount,
+                $discount
             );
-            $discountedOrderHistory->append($orderWithAppliedDiscount);
+            $discountOrder = $discountOrder->getOrderWithNewItems($orderItemsWithAppliedDiscount);
+            $discountedOrderHistory->append(new DiscountedOrderItems(
+                $discount,
+                $discountOrder->orderItems->overWriteWithNewItems($orderItemsWithAppliedDiscount)
+            ));
         }
         return new OrderWithDiscount(
             $order,
