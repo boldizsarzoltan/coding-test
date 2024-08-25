@@ -32,7 +32,7 @@ class DiscountApplier
         $orderItemsWithDiscount = new OrderItems();
         /** @var OrderItem $orderItem */
         foreach ($orderItems as $orderItem) {
-            $orderItemsWithDiscount->append($orderItem->overWriteFreeCount($countToBeFree));
+            $orderItemsWithDiscount->append($orderItem->addFreeCount($countToBeFree));
         }
         return $orderItemsWithDiscount;
     }
@@ -43,16 +43,16 @@ class DiscountApplier
         $productId = 0;
         $minToTalPrice = 0;
         foreach ($orderItems as $orderItem) {
-            if ($minToTalPrice !== 0 && $orderItem->getTotal() < $minToTalPrice) {
+            if (($minToTalPrice !== 0 || $orderItem->getTotal() < $minToTalPrice) && $orderItem->hasNotFreeQuantity()) {
                 $minToTalPrice = $orderItem->getTotal();
                 $productId = $orderItem->id;
             }
         }
+        /** @var OrderItem $originalOrderItem */
         foreach ($orderItems as $originalOrderItem) {
-            if($productId !== $originalOrderItem->getProductId()) {
+            if ($productId !== $originalOrderItem->id) {
                 $newOrderItems->append($originalOrderItem);
-            }
-            else {
+            } else {
                 $newUnitPrice = $this->getRoundedPrice($originalOrderItem->unitPrice, $value);
                 $orderItemWithDiscount = $originalOrderItem->overWriteWithNewUnitPrice($newUnitPrice);
                 $newOrderItems->append($orderItemWithDiscount);
@@ -68,13 +68,13 @@ class DiscountApplier
             return $orderItems;
         }
         $orderItemsWithDiscount = new OrderItems();
-        /** @var OrderItem $orderItem */
+        /** @var OrderItem $originalOrderItem */
         foreach ($orderItems as $originalOrderItem) {
             $newUnitPrice = $this->getRoundedPrice($originalOrderItem->unitPrice, $value);
-            $newOrderItem = $orderItem->overWriteWithNewUnitPrice($newUnitPrice)
+            $newOrderItem = $originalOrderItem->overWriteWithNewUnitPrice($newUnitPrice);
             $orderItemsWithDiscount->append($newOrderItem);
         }
-        return $orderItemsWithDiscount
+        return $orderItemsWithDiscount;
     }
 
     public function getRoundedPrice(int $unitPrice, int $value): int

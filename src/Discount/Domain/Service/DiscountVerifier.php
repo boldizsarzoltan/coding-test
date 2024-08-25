@@ -41,7 +41,7 @@ class DiscountVerifier
         $categoryProductsCount = 0;
         /** @var OrderItem $item */
         foreach ($order->orderItems as $item) {
-            if ($item->categoryId === $discountRule->value) {
+            if ($item->categoryId === $discountRule->value && $item->hasNotFreeQuantity()) {
                 $categoryProductsCount++;
             }
         }
@@ -50,7 +50,7 @@ class DiscountVerifier
         }
         $categoryOrderItems = new OrderItems();
         foreach ($order->orderItems as $item) {
-            if ($item->categoryId === $discountRule->value) {
+            if ($item->categoryId === $discountRule->value && $item->hasNotFreeQuantity()) {
                 $categoryOrderItems->append($item);
             }
         }
@@ -62,7 +62,10 @@ class DiscountVerifier
         $categoryOrderItems = new OrderItems();
         /** @var OrderItem $item */
         foreach ($order->orderItems as $item) {
-            if ($item->categoryId === $discountRule->value && $item->quantity >= (int) $discountRule->value2) {
+            if (
+                $item->categoryId === $discountRule->value &&
+                $item->getNotFreeQuantity() >= (int) $discountRule->value2
+            ) {
                 $categoryOrderItems->append($item);
             }
         }

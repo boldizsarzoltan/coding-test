@@ -48,8 +48,9 @@ class OrderItems extends TypedArray
     private function getProductIds(): array
     {
         $productIds = [];
+        /** @var OrderItem $orderItem */
         foreach ($this as $orderItem) {
-            $productIds[] = $orderItem->getProductId();
+            $productIds[] = $orderItem->id;
         }
         return  $productIds;
     }

@@ -11,7 +11,7 @@ readonly class OrderItem
         public int $categoryId,
         public int $quantity,
         public int $unitPrice,
-        public int $freeCount = 0
+        public int $freeCount
     ) {
         $this->validate();
     }
@@ -27,19 +27,30 @@ readonly class OrderItem
             $this->id,
             $this->categoryId,
             $this->quantity,
-            $this->unitPrice,
-            $newUnitPrice
+            $newUnitPrice,
+            $this->freeCount
         );
     }
 
-    public function overWriteFreeCount(int $freeCount): self
+    public function addFreeCount(int $newFreeCount): self
     {
         return new self(
             $this->id,
             $this->categoryId,
             $this->quantity,
-            $freeCount
+            $this->unitPrice,
+            $this->freeCount + $newFreeCount
         );
+    }
+
+    public function hasNotFreeQuantity(): bool
+    {
+        return $this->getNotFreeQuantity() > 0;
+    }
+
+    public function getNotFreeQuantity(): int
+    {
+        return $this->quantity - $this->freeCount;
     }
 
     private function validate(): void

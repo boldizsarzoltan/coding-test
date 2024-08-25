@@ -4,26 +4,24 @@ namespace App\Discount\Domain\Service;
 
 use App\Discount\Domain\Discount\Model\Discount;
 use App\Discount\Domain\Discount\Service\DiscountRepository;
-use App\Discount\Domain\Model\DiscountedOrder;
 use App\Discount\Domain\Model\DiscountedOrderItems;
 use App\Discount\Domain\Model\DiscountedOrdersItems;
 use App\Discount\Domain\Model\OrderWithDiscount;
 use App\Discount\Domain\Order\Model\Order;
-use App\Discount\Domain\Model\Order as DiscountOrder;
 
 readonly class DiscountService
 {
     public function __construct(
         private DiscountApplier $discountApplier,
         private DiscountVerifier $discountVerifier,
-        private OrderEnhancer $orderEnhancer,
+        private OrderTransformer $orderEnhancer,
         private DiscountRepository $discountRepository
     ) {
     }
 
     public function getDiscountedOrder(Order $order): ?OrderWithDiscount
     {
-        $discountOrder = $this->orderEnhancer->enhanceOrder($order);
+        $discountOrder = $this->orderEnhancer->transformOrderToDiscountOrder($order);
         if (is_null($discountOrder)) {
             return null;
         }

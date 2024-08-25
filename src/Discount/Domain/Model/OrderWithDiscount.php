@@ -8,8 +8,8 @@ use App\Discount\Domain\Model\Order as OrderWithDiscountsApplied;
 readonly class OrderWithDiscount
 {
     public function __construct(
-        public Order                     $originalOrder,
-        public DiscountedOrdersItems     $discountedOrderHistory,
+        public Order $originalOrder,
+        public DiscountedOrdersItems $discountedOrderHistory,
         public OrderWithDiscountsApplied $finalOrder
     ) {
     }
