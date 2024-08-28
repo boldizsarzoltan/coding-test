@@ -22,9 +22,6 @@ readonly class DiscountService
     public function getDiscountedOrder(Order $order): ?OrderWithDiscount
     {
         $discountOrder = $this->orderEnhancer->transformOrderToDiscountOrder($order);
-        if (is_null($discountOrder)) {
-            return null;
-        }
         $discountedOrderHistory = new DiscountedOrdersItems();
         $discounts = $this->discountRepository->getDiscounts();
         /** @var Discount $discount */

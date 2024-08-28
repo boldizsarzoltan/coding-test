@@ -45,8 +45,9 @@ class DiscountController extends AbstractController
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
-        $orderWithDiscount = $this->discountService->getDiscountedOrder($order);
-        if (is_null($orderWithDiscount)) {
+        try {
+            $orderWithDiscount = $this->discountService->getDiscountedOrder($order);
+        } catch (\Throwable $throwable) {
             return new JsonResponse([], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
         return new JsonResponse(

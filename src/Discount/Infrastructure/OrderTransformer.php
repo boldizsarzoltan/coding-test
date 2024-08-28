@@ -3,6 +3,7 @@
 namespace App\Discount\Infrastructure;
 
 use App\Customer\Application\Gateway\CustomerFacade;
+use App\Discount\Domain\Exception\DiscountOrderException;
 use App\Discount\Domain\Model\DiscountedOrder;
 use App\Discount\Domain\Model\Order as DiscountOrder;
 use App\Discount\Domain\Order\Model\Order;
@@ -21,37 +22,47 @@ readonly class OrderTransformer implements OrderEnhancerInterface
     ) {
     }
 
-    public function transformOrderToDiscountOrder(Order $order): ?DiscountOrder
+    public function transformOrderToDiscountOrder(Order $order): DiscountOrder
     {
-        $discountCustomer = $this->customerFacade->getCustomerOrderData($order->customerId);
-        if (is_null($discountCustomer)) {
-            return null;
-        }
-        $discountOrderCustomer = $this->customerMapper->mapArrayToDiscountCustomer(
-            $discountCustomer
-        );
-        if (is_null($discountOrderCustomer)) {
-            return null;
-        }
-        $productsWithFullInfoAsArray = $this->productFacade->getProductCategoriesByProductsIds(
-            $order->orderItems->getItemIds()
-        );
-        $dicountOrderItems = new OrderItems();
-        /** @var OrderItem $orderItem */
-        foreach ($order->orderItems as $orderItem) {
-            $discountOrderItem = $this->discountItemMapper->mapOrderItemToDiscountItem(
-                $orderItem,
-                $productsWithFullInfoAsArray[$orderItem->id] ?? []
+        try {
+            $discountCustomer = $this->customerFacade->getCustomerOrderData($order->customerId);
+            $productsWithFullInfoAsArray = $this->productFacade->getProductCategoriesByProductsIds(
+                $order->orderItems->getItemIds()
             );
-            if (is_null($discountOrderItem)) {
-                return null;
-            }
-            $dicountOrderItems->append($discountOrderItem);
+        } catch (\Throwable $throwable) {
+            throw new DiscountOrderException($throwable->getMessage());
+        }
+        try {
+            $discountOrderCustomer = $this->customerMapper->mapArrayToDiscountCustomer(
+                $discountCustomer
+            );
+            $discountOrderItems = $this->getItems($order, $productsWithFullInfoAsArray);
+        } catch (\Throwable $throwable) {
+
         }
         return new DiscountOrder(
             $order->id,
             $discountOrderCustomer,
-            $dicountOrderItems
+            $discountOrderItems
         );
+    }
+
+    /**
+     * @param Order $order
+     * @param array<string, array<mixed>> $productsWithFullInfoAsArray
+     * @return OrderItems
+     */
+    public function getItems(Order $order, array $productsWithFullInfoAsArray): OrderItems
+    {
+        $discountOrderItems = new OrderItems();
+        /** @var OrderItem $orderItem */
+        foreach ($order->orderItems as $orderItem) {
+            $discountOrderItem = $this->discountItemMapper->mapOrderItemToDiscountItem(
+                $orderItem,
+                $productsWithFullInfoAsArray[$orderItem->id]
+            );
+            $discountOrderItems->append($discountOrderItem);
+        }
+        return $discountOrderItems;
     }
 }
