@@ -4,6 +4,8 @@ namespace App\Discount\Domain\Service;
 
 use App\Discount\Domain\Discount\Model\Discount;
 use App\Discount\Domain\Discount\Service\DiscountRepository;
+use App\Discount\Domain\Exception\DiscountOrderDataException;
+use App\Discount\Domain\Exception\DiscountOrderException;
 use App\Discount\Domain\Model\DiscountedOrderItems;
 use App\Discount\Domain\Model\DiscountedOrdersItems;
 use App\Discount\Domain\Model\OrderWithDiscount;
@@ -19,7 +21,13 @@ readonly class DiscountService
     ) {
     }
 
-    public function getDiscountedOrder(Order $order): ?OrderWithDiscount
+    /**
+     * @param Order $order
+     * @return OrderWithDiscount
+     * @throws DiscountOrderException
+     * @throws DiscountOrderDataException
+     */
+    public function getDiscountedOrder(Order $order): OrderWithDiscount
     {
         $discountOrder = $this->orderEnhancer->transformOrderToDiscountOrder($order);
         $discountedOrderHistory = new DiscountedOrdersItems();

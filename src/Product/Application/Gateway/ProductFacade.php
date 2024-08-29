@@ -2,6 +2,9 @@
 
 namespace App\Product\Application\Gateway;
 
+use App\Product\Application\Exception\ExpectedRunTimeException;
+use App\Product\Application\Exception\UnexpectedRunTimeException;
+use App\Product\Domain\Exception\ProductDataException;
 use App\Product\Domain\Service\ProductRepository;
 
 readonly class ProductFacade
@@ -21,7 +24,13 @@ readonly class ProductFacade
      */
     public function getProductCategoriesByProductsIds(array $productsIds): array
     {
-        $products = $this->repository->getByIds($productsIds);
-        return $this->mapper->mapProductsCategoryDataToArray($products);
+        try {
+            $products = $this->repository->getByIds($productsIds);
+            return $this->mapper->mapProductsCategoryDataToArray($products);
+        } catch (ProductDataException $exception) {
+            throw new ExpectedRunTimeException($exception->getMessage());
+        } catch (\Throwable $exception) {
+            throw new UnexpectedRunTimeException($exception->getMessage());
+        }
     }
 }

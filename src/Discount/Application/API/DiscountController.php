@@ -5,6 +5,8 @@ namespace App\Discount\Application\API;
 use App\Discount\Application\Exception\MappingException;
 use App\Discount\Application\OrderMapper;
 use App\Discount\Application\Service\DiscountOrderMapper;
+use App\Discount\Domain\Exception\DiscountOrderDataException;
+use App\Discount\Domain\Exception\DiscountOrderException;
 use App\Discount\Domain\Service\DiscountService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,7 +25,7 @@ class DiscountController extends AbstractController
     ) {
     }
 
-    #[Route(path:'/', name: 'discounts', methods: ['POST'])]
+    #[Route(path:'/discountedOrder', name: 'discounts', methods: ['POST'])]
     public function getOrderWithDiscounts(Request $request): JsonResponse
     {
         $parameters = json_decode($request->getContent(), true);
@@ -47,8 +49,24 @@ class DiscountController extends AbstractController
         }
         try {
             $orderWithDiscount = $this->discountService->getDiscountedOrder($order);
+        } catch (DiscountOrderDataException $discountOrderException) {
+            return new JsonResponse(
+                [
+                    'message' => $discountOrderException->getMessage()
+                ],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        } catch (DiscountOrderException $discountOrderException) {
+            $this->logger->error($discountOrderException->getMessage());
+            return new JsonResponse(
+                [
+                    'message' => 'Server had an unexpected internal error'
+                ],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         } catch (\Throwable $throwable) {
-            return new JsonResponse([], Response::HTTP_INTERNAL_SERVER_ERROR);
+            $this->logger->error($throwable->getMessage());
+            return new JsonResponse(['message' => 'Unknown error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
         return new JsonResponse(
             $this->discountOrderMapper->mapOrderWithDiscountToArray(

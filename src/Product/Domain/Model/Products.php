@@ -24,7 +24,7 @@ class Products extends TypedArray
      * @param array<string> $idsToFind
      * @return Products<string, Product>
      */
-    public function findByIds(array $idsToFind): Products // @phpstan-ignore-line
+    public function findByIds(array $idsToFind): Products
     {
         $foundProducts = new Products();
         /** @var Product $product */
@@ -32,7 +32,7 @@ class Products extends TypedArray
             if (!in_array($product->id, $idsToFind)) {
                 continue;
             }
-            $foundProducts->offsetSet($product->id, $product); // @phpstan-ignore-line
+            $foundProducts->offsetSet($product->id, $product);
         }
         return $foundProducts;
     }

@@ -11,6 +11,7 @@ class DiscountItemMapper
 {
     /**
      * @param array<string|int|null> $additionalData
+     * @throws InvalidOrderItemDataException
      */
     public function mapOrderItemToDiscountItem(SimpleOrderItem $orderItem, array $additionalData): DiscountOrderItem
     {

@@ -2,6 +2,8 @@
 
 namespace App\Customer\Infrastructure;
 
+use App\Customer\Domain\Exception\CustomerNotFoundException;
+use App\Customer\Domain\Exception\CustomersDataException;
 use App\Customer\Domain\Model\Customer;
 use App\Customer\Domain\Model\Customers;
 use App\Customer\Domain\Service\CustomerRepository;
@@ -15,13 +17,17 @@ readonly class FileCustomerRepository implements CustomerRepository
     ) {
     }
 
-    public function getById(int $id): ?Customer
+    public function getById(int $id): Customer
     {
         $customers = $this->getCustomers();
         if (is_null($customers)) {
-            return null;
+            throw new CustomersDataException();
         }
-        return $customers->findById($id);
+        $customer = $customers->findById($id);
+        if (is_null($customer)) {
+            throw new CustomerNotFoundException();
+        }
+        return $customer;
     }
 
     /**
