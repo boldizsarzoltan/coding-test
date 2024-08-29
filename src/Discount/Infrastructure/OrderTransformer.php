@@ -54,7 +54,7 @@ readonly class OrderTransformer implements OrderEnhancerInterface
     {
         try {
             $discountOrderItems = new DiscountOrderItems();
-            /** @var DiscountOrderItem $orderItem */
+            /** @var OrderItem $orderItem */
             foreach ($order->orderItems as $orderItem) {
                 $discountOrderItem = $this->discountItemMapper->mapOrderItemToDiscountItem(
                     $orderItem,
@@ -72,7 +72,7 @@ readonly class OrderTransformer implements OrderEnhancerInterface
 
     /**
      * @param Order $order
-     * @return array
+     * @return array<mixed>
      * @throws DiscountOrderDataException
      * @throws DiscountOrderException
      */

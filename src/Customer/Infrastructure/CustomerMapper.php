@@ -4,6 +4,7 @@ namespace App\Customer\Infrastructure;
 
 use App\Customer\Domain\Exception\InvalidCustomerException;
 use App\Customer\Domain\Model\Customer;
+use App\Shared\Settings;
 
 readonly class CustomerMapper
 {
@@ -24,11 +25,12 @@ readonly class CustomerMapper
             throw new InvalidCustomerException();
         }
 
+        $revenue = $data["revenue"] ?? 0;
         return new Customer(
             $data["id"],
             $data["name"],
             new \DateTimeImmutable($data["since"]),
-            $data["revenue"] ?? 0
+            $revenue * Settings::PRICE_VALUE_MULTIPLIER
         );
     }
 }

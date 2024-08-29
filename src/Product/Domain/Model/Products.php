@@ -5,7 +5,7 @@ namespace App\Product\Domain\Model;
 use App\Shared\TypedArray;
 
 /**
- * @extends  TypedArray<Product>
+ * @extends TypedArray<Product>
  */
 class Products extends TypedArray
 {
@@ -22,9 +22,9 @@ class Products extends TypedArray
 
     /**
      * @param array<string> $idsToFind
-     * @return Products<string, Product>
+     * @return Products<Product>
      */
-    public function findByIds(array $idsToFind): Products
+    public function findByIds(array $idsToFind): self
     {
         $foundProducts = new Products();
         /** @var Product $product */
@@ -32,7 +32,7 @@ class Products extends TypedArray
             if (!in_array($product->id, $idsToFind)) {
                 continue;
             }
-            $foundProducts->offsetSet($product->id, $product);
+            $foundProducts->offsetSet($product->id, $product); // @phpstan-ignore-line
         }
         return $foundProducts;
     }

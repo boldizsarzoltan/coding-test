@@ -10,14 +10,22 @@ use App\Shared\Settings;
 class DiscountItemMapper
 {
     /**
-     * @param array<string|int|null> $additionalData
+     * @param array<mixed> $additionalData
      * @throws InvalidOrderItemDataException
      */
     public function mapOrderItemToDiscountItem(SimpleOrderItem $orderItem, array $additionalData): DiscountOrderItem
     {
-        if (!isset($additionalData["category_id"])) {
+        if (
+            !isset($additionalData["category_id"])
+        ) {
             throw new InvalidOrderItemDataException();
         }
+        if (
+            !is_int($additionalData["category_id"]) && !ctype_digit($additionalData['category_id'])
+        ) {
+            throw new InvalidOrderItemDataException();
+        }
+        /** @var array{category_id:int} $additionalData */
         return new DiscountOrderItem(
             $orderItem->id,
             (int) $additionalData["category_id"],

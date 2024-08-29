@@ -13,12 +13,14 @@ use Symfony\Component\HttpFoundation\Request;
 class OrderMapper
 {
     /**
-     * @param array<mixed> $data
      * @return Order
      * @throws MappingException
      */
-    public function mapToOrder(array $data): Order
+    public function mapToOrder(mixed $data): Order
     {
+        if (!is_array($data)) {
+            throw new MappingException("request data invalid");
+        }
         if (!isset($data["id"])) {
             throw new MappingException("order id not set");
         }
@@ -57,7 +59,7 @@ class OrderMapper
 
     /**
      * @param array<mixed> $items
-     * @return array{array<string>, OrderItems<OrderItem>}
+     * @return array{0:array<string[]>, 1:OrderItems<OrderItem>}
      */
     public function mapItems(array $items): array
     {
@@ -72,7 +74,7 @@ class OrderMapper
                 }
                 $orderItems->append($item);
             } catch (MappingItemException $e) {
-                $errors[$key] = $e->getMessage();
+                $errors[$key] = [$e->getMessage()];
             }
         }
         return [$errors, $orderItems];
