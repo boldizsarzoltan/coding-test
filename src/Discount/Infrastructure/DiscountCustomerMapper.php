@@ -4,6 +4,7 @@ namespace App\Discount\Infrastructure;
 
 use App\Discount\Domain\Exception\DiscountOrderDataMappingException;
 use App\Discount\Domain\Model\Customer;
+use App\Shared\Settings;
 
 class DiscountCustomerMapper
 {
@@ -13,19 +14,23 @@ class DiscountCustomerMapper
      */
     public function mapArrayToDiscountCustomer(array $discountCustomer): Customer
     {
-        if (!isset($discountCustomer["id"]) || !$discountCustomer["total"]) {
-            throw new DiscountOrderDataMappingException();
+        if (!isset($discountCustomer["id"])) {
+            throw new DiscountOrderDataMappingException("customer-id is required");
+        }
+        if (!isset($discountCustomer["revenue"])) {
+            throw new DiscountOrderDataMappingException("revenue is required");
         }
         if (!is_int($discountCustomer["id"]) && !ctype_digit($discountCustomer['id'])) {
             throw new DiscountOrderDataMappingException();
         }
-        if (!is_int($discountCustomer["total"]) && !ctype_digit($discountCustomer['total'])) {
+        if (!is_numeric($discountCustomer["revenue"])) {
             throw new DiscountOrderDataMappingException();
         }
-        /** @var array{total:int, id:int} $discountCustomer */
+        /** @var array{revenue:float, id:int} $discountCustomer */
+        $total = (float)$discountCustomer["revenue"];
         return new Customer(
             (int) $discountCustomer["id"],
-            (int) $discountCustomer["total"]
+            (int) ($total * Settings::PRICE_VALUE_MULTIPLIER)
         );
     }
 }

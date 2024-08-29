@@ -21,7 +21,7 @@ readonly class CustomerFacade
      * @param int $customerId
      * @return array{
      *     id:int,
-     *     revenue:int
+     *     revenue:float
      * }
      */
     public function getCustomerOrderData(int $customerId): array

@@ -36,7 +36,7 @@ class OrderMapper
         if (!isset($data["total"])) {
             throw new MappingException("total not set");
         }
-        if (!is_int($data["total"]) && !ctype_digit($data['total'])) {
+        if (!is_numeric($data["total"])) {
             throw new MappingException("total is not integer");
         }
         if (!isset($data["items"])) {
@@ -49,11 +49,12 @@ class OrderMapper
         if (!empty($errors)) {
             throw new MappingException("items have errors:" . json_encode($errors));
         }
+        $total = (float)$data["total"];
         return new Order(
             $data["id"],
             $data["customer-id"],
             $orderItems,
-            $data["total"] * Settings::PRICE_VALUE_MULTIPLIER,
+            (int) ($total * Settings::PRICE_VALUE_MULTIPLIER),
         );
     }
 
@@ -68,7 +69,9 @@ class OrderMapper
         foreach ($items as $key => $item) {
             try {
                 [$errorsFromMapper, $item] = $this->mapItem($item);
-                $errors[$key] = $errorsFromMapper;
+                if (!empty($errorsFromMapper)) {
+                    $errors[$key] = $errorsFromMapper;
+                }
                 if (is_null($item)) {
                     continue;
                 }
@@ -97,7 +100,7 @@ class OrderMapper
         if ($productIdSet && !is_string($item["product-id"])) {
             $errors[] = "product-id not string";
         }
-        $quantityIsSet = !isset($item["quantity"]);
+        $quantityIsSet = isset($item["quantity"]);
         if (!$quantityIsSet) {
             $errors[] = "quantity not set";
         }
@@ -108,10 +111,10 @@ class OrderMapper
         if (!isset($unitPriceIsSet)) {
             $errors[] = "unit-price not set";
         }
-        if ($productIdSet && !is_float($item["unit-price"]) && is_numeric($item["unit-price"])) {
+        if ($productIdSet && !is_numeric($item["unit-price"])) {
             $errors[] = "unit-price not float";
         }
-        if (!isset($item["total"]) && !is_float($item["total"]) && is_numeric($item["total"])) {
+        if (!isset($item["total"]) && !is_numeric($item["total"])) {
             $errors[] = "total not set";
         }
         if (!empty($errors)) {

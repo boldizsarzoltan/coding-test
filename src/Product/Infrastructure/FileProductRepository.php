@@ -11,6 +11,7 @@ use App\Product\Domain\Exception\ProductNotFoundException;
 use App\Product\Domain\Model\Product;
 use App\Product\Domain\Model\Products;
 use App\Product\Domain\Service\ProductRepository;
+use App\Shared\Settings;
 use Symfony\Component\Filesystem\Filesystem;
 
 readonly class FileProductRepository implements ProductRepository
@@ -46,10 +47,10 @@ readonly class FileProductRepository implements ProductRepository
      */
     public function getProducts(): Products
     {
-        if (!$this->filesystem->exists('data/products.json')) {
+        if (!$this->filesystem->exists(Settings::DATA_PATH . 'data/products.json')) {
             throw new ProductDataException();
         }
-        $rawProductsData = $this->filesystem->readFile('data/products.json');
+        $rawProductsData = $this->filesystem->readFile(Settings::DATA_PATH . 'data/products.json');
         if (!json_validate($rawProductsData)) {
             throw new ProductDataException();
         }

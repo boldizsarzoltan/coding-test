@@ -57,7 +57,7 @@ class DiscountController extends AbstractController
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         } catch (DiscountOrderException $discountOrderException) {
-            $this->logger->error($discountOrderException->getMessage());
+            $this->logger->error($discountOrderException->getTraceAsString());
             return new JsonResponse(
                 [
                     'message' => 'Server had an unexpected internal error'
@@ -65,7 +65,7 @@ class DiscountController extends AbstractController
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         } catch (\Throwable $throwable) {
-            $this->logger->error($throwable->getMessage());
+            $this->logger->error($throwable->getTraceAsString());
             return new JsonResponse(['message' => 'Unknown error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
         return new JsonResponse(

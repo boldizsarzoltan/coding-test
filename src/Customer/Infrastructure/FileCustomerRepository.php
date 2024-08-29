@@ -7,6 +7,7 @@ use App\Customer\Domain\Exception\CustomersDataException;
 use App\Customer\Domain\Model\Customer;
 use App\Customer\Domain\Model\Customers;
 use App\Customer\Domain\Service\CustomerRepository;
+use App\Shared\Settings;
 use Symfony\Component\Filesystem\Filesystem;
 
 readonly class FileCustomerRepository implements CustomerRepository
@@ -35,10 +36,10 @@ readonly class FileCustomerRepository implements CustomerRepository
      */
     public function getCustomers(): ?Customers
     {
-        if (!$this->filesystem->exists('data/customers.json')) {
+        if (!$this->filesystem->exists(Settings::DATA_PATH . 'data/customers.json')) {
             return null;
         }
-        $rawCustomersData = $this->filesystem->readFile('data/customers.json');
+        $rawCustomersData = $this->filesystem->readFile(Settings::DATA_PATH . 'data/customers.json');
         if (!json_validate($rawCustomersData)) {
             return null;
         }

@@ -8,7 +8,7 @@ readonly class Customer
         public int $id,
         public string $name,
         public \DateTimeImmutable $since,
-        public int $revenue = 0
+        public float $revenue = 0
     ) {
     }
 }
