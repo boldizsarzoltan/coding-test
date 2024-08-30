@@ -17,9 +17,10 @@ readonly class OrderItem
 
     private function validate(): void
     {
-        if ($this->total == $this->quantity * $this->unitPrice) {
-            return;
+        if ($this->total !== $this->quantity * $this->unitPrice) {
+            throw new InvalidOrderItemException(
+                "Order item total must be equal to quantity * price, id:{$this->id}"
+            );
         }
-        throw new InvalidOrderItemException();
     }
 }

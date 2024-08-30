@@ -7,6 +7,8 @@ use App\Discount\Application\OrderMapper;
 use App\Discount\Application\Service\DiscountOrderMapper;
 use App\Discount\Domain\Exception\DiscountOrderDataException;
 use App\Discount\Domain\Exception\DiscountOrderException;
+use App\Discount\Domain\Order\Exception\InvalidOrderException;
+use App\Discount\Domain\Order\Exception\InvalidOrderItemException;
 use App\Discount\Domain\Service\DiscountService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,6 +34,13 @@ class DiscountController extends AbstractController
         try {
             $order = $this->orderMapper->mapToOrder($parameters);
         } catch (MappingException $exception) {
+            return new JsonResponse(
+                [
+                    'message' => $exception->getMessage()
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } catch (InvalidOrderException|InvalidOrderItemException $exception) {
             return new JsonResponse(
                 [
                     'message' => $exception->getMessage()

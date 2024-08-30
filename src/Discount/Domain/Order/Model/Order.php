@@ -17,20 +17,22 @@ readonly class Order
 
     private function validate(): void
     {
-        $idToSmall = $this->id < 1;
-        $customerIdToSmall = $this->customerId < 1;
-        $noOrderItems = $this->orderItems->count() < 1;
-        $totalToSmall = $this->totalPrice < 1;
-        $orderTotalNoTqEqualToItemTotal = $this->totalPrice != $this->orderItems->getItemsTotal();
-        if (
-            !$idToSmall &&
-            !$customerIdToSmall &&
-            !$noOrderItems &&
-            !$totalToSmall &&
-            !$orderTotalNoTqEqualToItemTotal
-        ) {
-            return;
+        if ($this->id < 1) {
+            throw new InvalidOrderException("Order id must be greater than 0");
         }
-        throw new InvalidOrderException();
+        if ($this->customerId < 1) {
+            throw new InvalidOrderException("Customer id must be greater than 0");
+        }
+        if ($this->orderItems->count() < 1) {
+            throw new InvalidOrderException("Order must have at least one item");
+        }
+        if ($this->totalPrice < 1) {
+            throw new InvalidOrderException("Order total must be greater than 0");
+        }
+        if (
+            $this->totalPrice != $this->orderItems->getItemsTotal()
+        ) {
+            throw new InvalidOrderException("Order item total must be equal to order total");
+        }
     }
 }
