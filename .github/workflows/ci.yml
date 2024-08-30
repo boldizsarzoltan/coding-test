@@ -19,9 +19,4 @@ jobs:
       - name: Run test suite
         run: vendor/bin/phpunit
       - name: PHP Code Sniffer
-        uses: php-actions/phpcs@v1
-        with:
-            php_version: 8.3
-            path: src/
-            standard: phpcs.xml.dist
-            warning_severity: 0
+        run: phpcs --standard=PSR12 --ignore-warnings src/
