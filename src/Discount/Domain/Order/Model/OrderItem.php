@@ -6,6 +6,9 @@ use App\Discount\Domain\Order\Exception\InvalidOrderItemException;
 
 readonly class OrderItem
 {
+    /**
+     * @throws InvalidOrderItemException
+     */
     public function __construct(
         public string $id,
         public int $quantity,

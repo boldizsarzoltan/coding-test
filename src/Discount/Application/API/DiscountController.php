@@ -40,7 +40,7 @@ class DiscountController extends AbstractController
                 ],
                 Response::HTTP_BAD_REQUEST
             );
-        } catch (InvalidOrderException|InvalidOrderItemException $exception) {
+        } catch (InvalidOrderException | InvalidOrderItemException $exception) {
             return new JsonResponse(
                 [
                     'message' => $exception->getMessage()

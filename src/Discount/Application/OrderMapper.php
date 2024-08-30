@@ -4,6 +4,7 @@ namespace App\Discount\Application;
 
 use App\Discount\Application\Exception\MappingException;
 use App\Discount\Application\Exception\MappingItemException;
+use App\Discount\Domain\Order\Exception\InvalidOrderItemException;
 use App\Discount\Domain\Order\Model\Order;
 use App\Discount\Domain\Order\Model\OrderItem;
 use App\Discount\Domain\Order\Model\OrderItems;
@@ -15,6 +16,7 @@ class OrderMapper
     /**
      * @return Order
      * @throws MappingException
+     * @throws InvalidOrderItemException
      */
     public function mapToOrder(mixed $data): Order
     {
