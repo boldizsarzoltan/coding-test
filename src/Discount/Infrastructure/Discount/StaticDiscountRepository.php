@@ -9,6 +9,7 @@ use App\Discount\Domain\Discount\Model\DiscountRule;
 use App\Discount\Domain\Discount\Model\DiscountRuleType;
 use App\Discount\Domain\Discount\Model\Discounts;
 use App\Discount\Domain\Discount\Service\DiscountRepository;
+use App\Shared\Settings;
 
 class StaticDiscountRepository implements DiscountRepository
 {
@@ -17,7 +18,7 @@ class StaticDiscountRepository implements DiscountRepository
         $discounts = new Discounts();
         $customerHas1000Total = new DiscountRule(
             DiscountRuleType::CustomerTotal,
-            100000 // each value that is a price should be *100
+            1000 * Settings::PRICE_VALUE_MULTIPLIER
         );
         $discountOf10Percent = new DiscountReduction(
             DiscountReductionType::TotalPercent,
@@ -30,7 +31,8 @@ class StaticDiscountRepository implements DiscountRepository
         $discounts->append($customerHas1000TotalAndGets10Percent);
         $orderProductHasCategoryId1AndTotalProductQuantity2 = new DiscountRule(
             DiscountRuleType::IndividualProductCategoryId,
-            2
+            2,
+            5
         );
         $buyAtLeast5Get1Free = new DiscountReduction(
             DiscountReductionType::FreeCount,
@@ -46,13 +48,13 @@ class StaticDiscountRepository implements DiscountRepository
             1,
             2
         );
-        $buyAtLeast5Get1Free = new DiscountReduction(
+        $get20PercentDiscountForTheCheapest = new DiscountReduction(
             DiscountReductionType::CheapestPercent,
             20
         );
         $orderProductHasCategoryId1AndTotalProductQuantity2 = new Discount(
             $orderProductHasCategoryId1AndTotalProductQuantity2,
-            $buyAtLeast5Get1Free
+            $get20PercentDiscountForTheCheapest
         );
         $discounts->append($orderProductHasCategoryId1AndTotalProductQuantity2);
         return $discounts;

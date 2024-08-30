@@ -38,7 +38,7 @@ readonly class DiscountService
                 $discountOrder,
                 $discount
             );
-            if (!$orderItemsEligibleForDiscount->isEmpty()) {
+            if ($orderItemsEligibleForDiscount->isEmpty()) {
                 continue;
             }
             $orderItemsWithAppliedDiscount = $this->discountApplier->getDiscountedOrderItems(

@@ -32,7 +32,9 @@ class DiscountApplier
         $orderItemsWithDiscount = new OrderItems();
         /** @var OrderItem $orderItem */
         foreach ($orderItems as $orderItem) {
-            $orderItemsWithDiscount->append($orderItem->addFreeCount($countToBeFree));
+            $orderItemsWithDiscount->append(
+                $orderItem->addQuantity($countToBeFree)->addFreeCount($countToBeFree)
+            );
         }
         return $orderItemsWithDiscount;
     }
@@ -43,7 +45,7 @@ class DiscountApplier
         $productId = 0;
         $minToTalPrice = 0;
         foreach ($orderItems as $orderItem) {
-            if (($minToTalPrice !== 0 || $orderItem->getTotal() < $minToTalPrice) && $orderItem->hasNotFreeQuantity()) {
+            if (($minToTalPrice === 0 || $orderItem->getTotal() < $minToTalPrice) && $orderItem->hasNotFreeQuantity()) {
                 $minToTalPrice = $orderItem->getTotal();
                 $productId = $orderItem->id;
             }
@@ -53,7 +55,7 @@ class DiscountApplier
             if ($productId !== $originalOrderItem->id) {
                 $newOrderItems->append($originalOrderItem);
             } else {
-                $newUnitPrice = $this->getRoundedPrice($originalOrderItem->unitPrice, $value);
+                $newUnitPrice = $originalOrderItem->unitPrice * (100 - $value) / 100;
                 $orderItemWithDiscount = $originalOrderItem->overWriteWithNewUnitPrice($newUnitPrice);
                 $newOrderItems->append($orderItemWithDiscount);
             }

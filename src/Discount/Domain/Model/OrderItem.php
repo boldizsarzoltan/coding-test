@@ -43,6 +43,17 @@ readonly class OrderItem
         );
     }
 
+    public function addQuantity(int $newQuantity): self
+    {
+        return new self(
+            $this->id,
+            $this->categoryId,
+            $this->quantity + $newQuantity,
+            $this->unitPrice,
+            $this->freeCount
+        );
+    }
+
     public function hasNotFreeQuantity(): bool
     {
         return $this->getNotFreeQuantity() > 0;
