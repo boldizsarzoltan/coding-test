@@ -2,6 +2,9 @@
 
 namespace App\Product\Domain\Model;
 
+use App\Product\Domain\Exception\InvalidProductException;
+use App\Shared\Settings;
+
 readonly class Product
 {
     public function __construct(
@@ -10,5 +13,13 @@ readonly class Product
         public int $categoryId,
         public int $price
     ) {
+        $this->validate();
+    }
+
+    private function validate(): void
+    {
+        if ($this->price < Settings::MIN_PRICE) {
+            throw new InvalidProductException();
+        }
     }
 }
