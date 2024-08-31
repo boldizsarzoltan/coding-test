@@ -14,16 +14,16 @@ readonly class ProductMapper
     public function mapProductFromArray(array $data): Product
     {
         if (
-            empty($data['id']) || !is_string($data['id']) ||
-            empty($data['description']) || !is_string($data["description"]) || empty($data['category']) ||
+            !isset($data['id']) || !is_string($data['id']) ||
+            !isset($data['description']) || !is_string($data["description"]) || !isset($data['category']) ||
             (!is_int($data["category"]) && !ctype_digit($data['category'])) ||
-            empty($data['price']) || !is_numeric($data["price"])
+            !isset($data['price']) || !is_numeric($data["price"])
         ) {
             throw new InvalidProductException();
         }
         $price = (float)$data["price"];
         return new Product(
-            $data['id'],
+            (string) $data['id'],
             $data["description"],
             $data["category"],
             (int) ($price * 100)
