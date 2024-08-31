@@ -34,6 +34,10 @@ readonly class CustomerMapper
             throw new InvalidCustomerException("name must be a string");
         }
 
+        if (isset($data["revenue"]) && !is_numeric($data["revenue"])) {
+            throw new InvalidCustomerException("revenue must not be set or be a float");
+        }
+
         $revenue = $data["revenue"] ?? 0;
         return new Customer(
             (int) $data["id"],
