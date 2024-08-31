@@ -15,11 +15,11 @@ class DiscountVerifier
     {
         return match ($discount->discountRule->discountRuleType) {
             DiscountRuleType::CustomerTotal => $this->customerHasMinTotal($order, $discount->discountRule),
-            DiscountRuleType::IndividualProductCategoryId => $this->orderProductsHaveCategoryId(
+            DiscountRuleType::MinCategoryProductsCount => $this->orderProductsHaveCategoryId(
                 $order,
                 $discount->discountRule
             ),
-            DiscountRuleType::MinCategoryProductsCount => $this->orderHasMinAmountOfProductsFromCategory(
+            DiscountRuleType::IndividualProductCategoryId => $this->orderHasMinAmountOfProductsFromCategory(
                 $order,
                 $discount->discountRule
             )
@@ -45,7 +45,7 @@ class DiscountVerifier
                 $categoryProductsCount++;
             }
         }
-        if ($categoryProductsCount <= $discountRule->value2) {
+        if ($categoryProductsCount < $discountRule->value2) {
             return new OrderItems();
         }
         $categoryOrderItems = new OrderItems();

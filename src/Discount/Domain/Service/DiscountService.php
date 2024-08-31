@@ -4,6 +4,8 @@ namespace App\Discount\Domain\Service;
 
 use App\Discount\Domain\Discount\Model\Discount;
 use App\Discount\Domain\Discount\Service\DiscountRepository;
+use App\Discount\Domain\Exception\DiscountOrderDataException;
+use App\Discount\Domain\Exception\DiscountOrderException;
 use App\Discount\Domain\Model\DiscountedOrderItems;
 use App\Discount\Domain\Model\DiscountedOrdersItems;
 use App\Discount\Domain\Model\OrderWithDiscount;
@@ -19,12 +21,15 @@ readonly class DiscountService
     ) {
     }
 
-    public function getDiscountedOrder(Order $order): ?OrderWithDiscount
+    /**
+     * @param Order $order
+     * @return OrderWithDiscount
+     * @throws DiscountOrderException
+     * @throws DiscountOrderDataException
+     */
+    public function getDiscountedOrder(Order $order): OrderWithDiscount
     {
         $discountOrder = $this->orderEnhancer->transformOrderToDiscountOrder($order);
-        if (is_null($discountOrder)) {
-            return null;
-        }
         $discountedOrderHistory = new DiscountedOrdersItems();
         $discounts = $this->discountRepository->getDiscounts();
         /** @var Discount $discount */
@@ -33,7 +38,7 @@ readonly class DiscountService
                 $discountOrder,
                 $discount
             );
-            if (!$orderItemsEligibleForDiscount->isEmpty()) {
+            if ($orderItemsEligibleForDiscount->isEmpty()) {
                 continue;
             }
             $orderItemsWithAppliedDiscount = $this->discountApplier->getDiscountedOrderItems(

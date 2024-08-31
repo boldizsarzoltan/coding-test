@@ -1,5 +1,3 @@
-controllers:
-    resource:
-        path: ../src/Discount/Application/API
-        namespace: App\Discount\Application\API
-    type: attribute
+get_order_discounts:
+    path: /
+    controller: App\Discount\Application\API\DiscountController::getOrderWithDiscounts

@@ -19,11 +19,11 @@ readonly class DiscountRule
     {
         switch ($this->discountRuleType) {
             case DiscountRuleType::CustomerTotal:
-            case DiscountRuleType::IndividualProductCategoryId:
                 if (!is_null($this->value2)) {
                     throw new InvalidDiscountRuleTypeException();
                 }
                 break;
+            case DiscountRuleType::IndividualProductCategoryId:
             case DiscountRuleType::MinCategoryProductsCount:
                 if (is_null($this->value2) || $this->value2 < 1) {
                     throw new InvalidDiscountRuleTypeException();

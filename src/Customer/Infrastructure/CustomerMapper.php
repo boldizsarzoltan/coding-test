@@ -4,6 +4,7 @@ namespace App\Customer\Infrastructure;
 
 use App\Customer\Domain\Exception\InvalidCustomerException;
 use App\Customer\Domain\Model\Customer;
+use App\Shared\Settings;
 
 readonly class CustomerMapper
 {
@@ -15,20 +16,30 @@ readonly class CustomerMapper
     {
         if (
             !isset($data["id"]) ||
-            !is_integer($data["id"]) ||
-            !isset($data["name"]) ||
-            !is_string($data["name"]) ||
+            (!is_integer($data["id"]) && !ctype_digit($data["id"]))
+        ) {
+            throw new InvalidCustomerException("customer id must be an integer");
+        }
+        if (
             !isset($data["since"]) ||
             !is_string($data["since"])
         ) {
-            throw new InvalidCustomerException();
+            throw new InvalidCustomerException("since must be a string");
         }
 
+        if (
+            !isset($data["name"]) ||
+            !is_string($data["name"])
+        ) {
+            throw new InvalidCustomerException("name must be a string");
+        }
+
+        $revenue = $data["revenue"] ?? 0;
         return new Customer(
-            $data["id"],
+            (int) $data["id"],
             $data["name"],
             new \DateTimeImmutable($data["since"]),
-            $data["revenue"] ?? 0
+            (float) $revenue
         );
     }
 }

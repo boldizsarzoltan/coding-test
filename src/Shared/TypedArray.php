@@ -17,7 +17,9 @@ abstract class TypedArray extends ArrayObject
      */
     public function __construct(array $array = [], int $flags = 0, string $iteratorClass = "ArrayIterator")
     {
-        $this->verifyType(...$array);
+        if (count($array) !== 0) {
+            $this->verifyType(...$array);
+        }
         parent::__construct($array, $flags, $iteratorClass);
     }
 

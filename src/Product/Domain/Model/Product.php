@@ -2,8 +2,6 @@
 
 namespace App\Product\Domain\Model;
 
-use App\Discount\Domain\Model\DiscountedOrder;
-
 readonly class Product
 {
     public function __construct(

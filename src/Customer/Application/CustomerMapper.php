@@ -9,8 +9,8 @@ readonly class CustomerMapper
     /**
      * @param Customer $customer
      * @return array{
-     *      id:int,
-     *     revenue:int
+     *     id:int,
+     *     revenue:float
      * }
      */
     public function customerToOrderArray(Customer $customer): array

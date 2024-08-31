@@ -5,7 +5,7 @@ namespace App\Product\Domain\Model;
 use App\Shared\TypedArray;
 
 /**
- * @extends  TypedArray<Product>
+ * @extends TypedArray<Product>
  */
 class Products extends TypedArray
 {
@@ -22,9 +22,9 @@ class Products extends TypedArray
 
     /**
      * @param array<string> $idsToFind
-     * @return Products<string, Product>
+     * @return Products<Product>
      */
-    public function findByIds(array $idsToFind): Products // @phpstan-ignore-line
+    public function findByIds(array $idsToFind): self
     {
         $foundProducts = new Products();
         /** @var Product $product */
