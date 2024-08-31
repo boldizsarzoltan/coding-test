@@ -19,4 +19,4 @@ jobs:
       - name: Run test suite
         run: vendor/bin/phpunit
       - name: PHP Code Sniffer
-        run: phpcs --standard=PSR12 --ignore-warnings src/
+        run: vendor/bin/phpcs --standard=PSR12 --ignore-warnings src/
